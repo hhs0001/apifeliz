@@ -1,13 +1,19 @@
 import numpy as np
-
-import tensorflow_datasets as tfds
+import pandas as pd
 import tensorflow as tf
 
-tfds.disable_progress_bar()
+dataset_train = pd.read_csv('twitter_training.csv')
+dataset_val = pd.read_csv('twitter_validation.csv')
 
-dataset, info = tfds.load('imdb_reviews', with_info=True,
-                          as_supervised=True)
-train_dataset, test_dataset = dataset['train'], dataset['test']
+dataset_train = dataset_train.drop(columns=['entity', 'Tweet ID'])
+
+dataset_val = dataset_val.drop(columns=['entity', 'Tweet ID'])
+
+x_train = dataset_train["Tweet content"]
+y_train = dataset_train["sentiment"]
+
+x_val = dataset_val["Tweet content"]
+y_val = dataset_val["sentiment"]
 
 BUFFER_SIZE = 10000
 BATCH_SIZE = 64
@@ -15,7 +21,7 @@ BATCH_SIZE = 64
 VOCAB_SIZE = 1000
 encoder = tf.keras.layers.TextVectorization(
     max_tokens=VOCAB_SIZE)
-encoder.adapt(train_dataset.map(lambda text, label: text))
+encoder.adapt(x_train.values)
 
 
 vocab = np.array(encoder.get_vocabulary())
@@ -36,11 +42,11 @@ model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               optimizer=tf.keras.optimizers.Adam(1e-4),
               metrics=['accuracy'])
 
-history = model.fit(train_dataset, epochs=10,
-                    validation_data=test_dataset,
+history = model.fit(x_train, epochs=10,
+                    validation_data=y_train,
                     validation_steps=30)
 
-test_loss, test_acc = model.evaluate(test_dataset)
+test_loss, test_acc = model.evaluate(x_val, y_val)
 
 print('Test Loss:', test_loss)
 print('Test Accuracy:', test_acc)
