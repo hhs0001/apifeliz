@@ -6,5 +6,5 @@
 
 ## Documentação
 
-[Documentação](https://github.com/hhs0001/apifeliz/blob/master/README.md)
+[Notebook](https://github.com/hhs0001/apifeliz/blob/master/AI/ai.ipynb)
 
