@@ -2,7 +2,7 @@ import tensorflow as tf
 import pickle
 class AIPredicSentiment:
     def __init__(self):
-        self.model = tf.keras.models.load_model('./AI/Model3')
+        self.model = tf.keras.models.load_model('./AI/modelo3/model3')
         with open('./AI/tokenizer.pickle', 'rb') as handle:
             self.tokenizer = pickle.load(handle)
 
